@@ -52,6 +52,37 @@ O sistema de smartphone utiliza **MySQL** como padrão para o salvamento de cont
 
 No entanto, caso você não possua um banco de dados MySQL configurado ou prefira uma solução mais simples, o script **pode ser facilmente configurado para utilizar SQLite**. Basta alterar a configuração de conexão no arquivo server-side correspondente para alternar o modo de salvamento.
 
+## 🚀 Funcionalidades
+
+### ✅ Já Implementadas
+- **Interface Moderna (UI/UX):** Design limpo, fluido e responsivo, construído com tecnologias web (CEF).
+- **Sistema Bancário:** Aplicativo de banco completo para realizar transferências e consultar saldo em tempo real.
+- **Notificações Inteligentes:** Sistema de notificações na tela (estilo *toast/swiper*) para alertas e mensagens.
+- **Física e Animações (3D):** O personagem interage com um objeto físico do celular na mão através do `pAttach`.
+- **Banco de Dados Híbrido:** Suporte nativo e otimizado para salvar informações utilizando MySQL ou SQLite.
+- **Integração por ElementData:** Fácil adaptação aos dados de qualquer gamemode/framework.
+
+### 🚧 Funcionalidades Futuras (Em Breve)
+- **Aplicativo de Contatos:** Salvar, editar e gerenciar a agenda telefônica de outros jogadores.
+- **Mensagens e Chat:** Envio de mensagens de texto estilo SMS ou WhatsApp.
+- **Sistema de Ligações:** Chamadas de voz em tempo real integradas com o sistema de áudio direcional do MTA.
+- **Câmera e Galeria:** Possibilidade de tirar fotos (screenshots) dentro do jogo e salvá-las na galeria.
+- **Redes Sociais e Anúncios:** Aplicativos estilo Twitter ou OLX para interação global entre os jogadores.
+- **Personalização:** Troca de papel de parede (Wallpapers) e temas (Dark/Light mode).
+
+## 🤝 Como Contribuir
+
+Este é um projeto colaborativo e toda ajuda é muito bem-vinda! Se você deseja adicionar novas funcionalidades, corrigir bugs, melhorar o código ou a interface, sinta-se à vontade para enviar as suas alterações. 
+
+Para contribuir:
+1. Faça um **Fork** deste repositório.
+2. Crie uma branch para a sua modificação (`git checkout -b feature/minha-nova-funcionalidade`).
+3. Faça o **Commit** das suas alterações (`git commit -m 'Adicionando minha nova funcionalidade'`).
+4. Faça o **Push** para a sua branch (`git push origin feature/minha-nova-funcionalidade`).
+5. Abra um **Pull Request** explicando o que foi feito.
+
+Ficaremos muito felizes em analisar e integrar o seu código (commits) ao projeto principal!
+
 ## 📄 Licença
 
 Este projeto é de código aberto. Sinta-se à vontade para contribuir, modificar e utilizar em seu servidor.
