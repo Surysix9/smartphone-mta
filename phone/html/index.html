@@ -108,7 +108,69 @@
                 <div class="app-interface" style="display: none;" data-app-id="3"></div> <!-- News App -->
                 <div class="app-interface" style="display: none;" data-app-id="4"></div> <!-- Settings App -->
                 <div class="app-interface" style="display: none;" data-app-id="5"> <!-- Bank App -->
-                    <div class="bank-view-home">
+                    
+                    <!-- View Auth (Entrada Principal) -->
+                    <div class="bank-view-auth nu-auth-screen">
+                        <div class="nu-brand-container">
+                            <div class="nu-logo">
+                                <!-- Logo estilo moderno -->
+                                <svg width="50" height="50" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M30 70V30L50 50L70 30V70" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <h1 class="nu-slogan">O banco digital que devolve o controle da sua vida financeira.</h1>
+                        </div>
+                        <div class="nu-bottom-actions">
+                            <button id="btn-show-login" class="nu-btn-primary">Entrar na minha conta</button>
+                            <button id="btn-show-register" class="nu-btn-secondary">Ainda não sou cliente</button>
+                        </div>
+                    </div>
+
+                    <!-- View Login -->
+                    <div class="bank-view-login nu-form-screen" style="display: none;">
+                        <div class="nu-header">
+                            <svg class="back-to-auth nu-back-btn" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+                        </div>
+                        <div class="nu-content">
+                            <h2 class="nu-heading">Olá! Digite sua conta e senha para acessar.</h2>
+                            <div class="nu-input-wrapper">
+                                <label>Número da Conta</label>
+                                <input type="text" id="login-account" class="nu-input" placeholder="00000-0" autocomplete="off">
+                            </div>
+                            <div class="nu-input-wrapper">
+                                <label>Senha (4 dígitos)</label>
+                                <input type="password" id="login-password" class="nu-input" placeholder="••••" maxlength="4" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="nu-footer">
+                            <button id="btn-submit-login" class="nu-fab-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- View Registro -->
+                    <div class="bank-view-register nu-form-screen" style="display: none;">
+                        <div class="nu-header">
+                            <svg class="back-to-auth nu-back-btn" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+                        </div>
+                        <div class="nu-content">
+                            <h2 class="nu-heading">Crie uma senha de 4 dígitos para o seu app.</h2>
+                            <p class="nu-subtext">Essa senha será usada para acessar o aplicativo e confirmar transações.</p>
+                            <div class="nu-input-wrapper">
+                                <label>Nova Senha</label>
+                                <input type="password" id="register-password" class="nu-input" placeholder="Ex: 1234" maxlength="4" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="nu-footer">
+                            <button id="btn-submit-register" class="nu-fab-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Home -->
+                    <div class="bank-view-home" style="display: none;">
                         <div class="bank-top-purple">
                             <div class="bank-header-flex">
                                 <div class="bank-logo"><strong>MTA</strong>BANK</div>
@@ -151,7 +213,7 @@
                             <div class="bank-history-section">
                                 <div class="history-header">
                                     <h3>Histórico</h3>
-                                    <a href="#">Ver tudo</a>
+                                    <a href="#" id="btn-see-all-history">Ver tudo</a>
                                 </div>
                                 <div class="history-list">
                                     <div class="history-item">
@@ -175,6 +237,50 @@
                         </div>
                     </div>
                     
+                    <!-- Full History View -->
+                    <div class="bank-view-history" style="display: none; flex-direction: column; height: 100%;">
+                        <div class="pix-header">
+                            <svg class="back-btn" id="close-history-area" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+                        </div>
+                        <div class="pix-body" style="flex-grow: 1; overflow-y: auto;">
+                            <h2 style="color: black; margin-bottom: 20px;">Extrato Completo</h2>
+                            <div class="full-history-list history-list" style="padding-bottom: 30px;">
+                                <!-- Preenchido pelo JS -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Keys View -->
+                    <div class="bank-view-keys" style="display: none; flex-direction: column; height: 100%;">
+                        <div class="pix-header">
+                            <svg class="back-btn" id="close-keys-area" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+                        </div>
+                        <div class="pix-body" style="flex-grow: 1; overflow-y: auto;">
+                            <h2 style="color: black; margin-bottom: 5px;">Minhas Chaves</h2>
+                            <p style="margin-bottom: 30px;">Essa chave pode ser usada para receber transferências mais fáceis.</p>
+                            
+                            <div class="copy-key-card" onclick="copyKey('account')">
+                                <div>
+                                    <div style="color: #666; font-family: sf-medium; font-size: 13px; margin-bottom: 8px;">Chave da Conta Bancária:</div>
+                                    <div id="current-account-key" style="color: #000; font-family: sf-bold; font-size: 18px; letter-spacing: 0.5px;">Carregando...</div>
+                                </div>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#8A05BE" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </div>
+                            
+                            <div class="copy-key-card" onclick="copyKey('random')" style="margin-bottom: 30px;">
+                                <div>
+                                    <div style="color: #666; font-family: sf-medium; font-size: 13px; margin-bottom: 8px;">Sua Chave Aleatória:</div>
+                                    <div id="current-pix-key" style="color: #000; font-family: sf-bold; font-size: 18px; letter-spacing: 0.5px;">Nenhuma chave gerada</div>
+                                </div>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#8A05BE" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                            </div>
+                            
+                            <button id="btn-generate-pix-key" class="nu-btn-purple" style="width: 100%;">
+                                Gerar Chave Aleatória
+                            </button>
+                        </div>
+                    </div>
+                    
                     <!-- Pix Area View -->
                     <div class="bank-view-pix" style="display: none;">
                         <div class="pix-header">
@@ -193,7 +299,7 @@
                                     </div>
                                     <div class="pai-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><path d="M9 18l6-6-6-6"></path></svg></div>
                                 </div>
-                                <div class="pix-action-item">
+                                <div class="pix-action-item" id="open-keys-area">
                                     <div class="pai-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg></div>
                                     <div class="pai-text">
                                         <h3>Minhas Chaves</h3>
@@ -206,22 +312,95 @@
                     </div>
 
                     <!-- Transfer Modal (Overlay) -->
-                    <div class="bank-transfer-modal" style="display: none;">
-                        <div class="bank-modal-header">
-                            <svg class="close-modal" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
-                            <span>Transferir / Pix</span>
+                    <div class="pix-transfer-modal nu-form-screen" style="display: none;">
+                        <div class="nu-header">
+                            <svg class="close-modal nu-back-btn" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
                         </div>
-                        <div class="bank-modal-body">
-                            <div class="bank-input-group">
-                                <label>ID / Conta de Destino</label>
-                                <input type="number" id="pix-target" placeholder="Ex: 1">
-                            </div>
-                            <div class="bank-input-group">
+                        <div class="nu-content">
+                            <h2 class="nu-heading">Qual é o valor da transferência?</h2>
+                            <p class="nu-subtext">Transferências em tempo real e sem taxas.</p>
+                            
+                            <div class="nu-input-wrapper">
                                 <label>Valor ($)</label>
-                                <input type="number" id="pix-amount" placeholder="Ex: 1500">
+                                <input type="number" id="pix-amount" class="nu-input" placeholder="0" autocomplete="off">
                             </div>
-                            <button class="bank-btn-confirm" id="btn-send-pix">Confirmar Transferência</button>
+                            
+                            <div class="nu-input-wrapper" style="margin-top: 15px;">
+                                <label>Conta de Destino (Ex: 12345-1)</label>
+                                <input type="text" id="pix-target" class="nu-input" placeholder="00000-0" autocomplete="off">
+                            </div>
                         </div>
+                        <div class="nu-footer">
+                            <button id="btn-verify-pix" class="nu-fab-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Confirm Pix Modal (Overlay) -->
+                    <div class="pix-confirm-modal nu-form-screen" style="display: none;">
+                        <div class="nu-header">
+                            <svg class="close-confirm nu-back-btn" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+                        </div>
+                        <div class="nu-content">
+                            <h2 class="nu-heading" style="font-size: 20px;">Confirme a transferência</h2>
+                            
+                            <div class="pix-summary">
+                                <div class="pix-summary-item">
+                                    <span>Valor:</span>
+                                    <strong id="confirm-pix-amount">$0</strong>
+                                </div>
+                                <div class="pix-summary-item">
+                                    <span>Para:</span>
+                                    <strong id="confirm-pix-name">Nome</strong>
+                                </div>
+                                <div class="pix-summary-item">
+                                    <span>Conta Destino:</span>
+                                    <strong id="confirm-pix-target">00000-0</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="nu-input-wrapper" style="margin-top: 20px;">
+                                <label>Senha de 4 dígitos</label>
+                                <input type="password" id="pix-password" class="nu-input" placeholder="••••" maxlength="4" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="nu-footer">
+                            <button id="btn-confirm-pix" class="nu-fab-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Key Password Modal -->
+                    <div class="key-password-modal nu-form-screen" style="display: none;">
+                        <div class="nu-header">
+                            <svg class="close-key-modal nu-back-btn" viewBox="0 0 24 24" fill="none" stroke="#777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+                        </div>
+                        <div class="nu-content">
+                            <h2 class="nu-heading" style="font-size: 20px;">Gerar nova chave</h2>
+                            <p class="nu-subtext">Digite sua senha de 4 dígitos para confirmar a geração de uma nova chave aleatória.</p>
+                            
+                            <div class="nu-input-wrapper" style="margin-top: 20px;">
+                                <label>Senha de 4 dígitos</label>
+                                <input type="password" id="key-password-input" class="nu-input" placeholder="••••" maxlength="4" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="nu-footer">
+                            <button id="btn-confirm-key-generate" class="nu-fab-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Loading Screen -->
+                    <div class="bank-loading-modal" style="display: none;">
+                        <div class="nu-loader">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                        <span>Processando...</span>
                     </div>
                 </div>
                 <div class="app-interface" style="display: none;" data-app-id="6"></div> <!-- Phone App -->

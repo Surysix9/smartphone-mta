@@ -329,7 +329,7 @@ input {
 }
 
 /* Bank App Refactored */
-.bank-view-home, .bank-view-pix {
+.bank-view-home, .bank-view-pix, .bank-view-auth, .bank-view-login, .bank-view-register {
     height: 100%;
     width: 100%;
     display: flex;
@@ -338,6 +338,208 @@ input {
     border-radius: calc(var(--px-radius) - 2.5px);
     overflow-y: auto;
     overflow-x: hidden;
+}
+
+/* Auth Screens (Nubank Clone) */
+.nu-auth-screen {
+    background-color: #8A05BE;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0;
+}
+
+.nu-brand-container {
+    padding: 50px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.nu-logo svg {
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+
+.nu-slogan {
+    color: white;
+    font-family: sf-bold;
+    font-size: 32px;
+    line-height: 1.1;
+    letter-spacing: -1px;
+}
+
+.nu-bottom-actions {
+    background-color: transparent;
+    width: 100%;
+    padding: 20px 30px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.nu-btn-primary {
+    background-color: white;
+    color: #8A05BE;
+    border-radius: 30px;
+    padding: 18px;
+    font-family: sf-bold;
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.nu-btn-primary:active {
+    background-color: #f0f0f0;
+    transform: scale(0.98);
+}
+
+.nu-btn-secondary {
+    background-color: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 30px;
+    padding: 18px;
+    font-family: sf-bold;
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.nu-btn-secondary:active {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(0.98);
+}
+
+.nu-btn-purple {
+    background-color: #8A05BE;
+    color: white;
+    border-radius: 30px;
+    padding: 18px;
+    font-family: sf-bold;
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    border: none;
+    box-sizing: border-box;
+}
+
+.nu-btn-purple:active {
+    background-color: #6C0494;
+    transform: scale(0.98);
+}
+
+/* Login and Register Forms */
+.nu-form-screen {
+    background-color: white;
+    justify-content: space-between;
+    padding: 0;
+    flex-direction: column;
+}
+
+.nu-header {
+    background-color: #8A05BE;
+    padding: 40px 20px 15px;
+}
+
+.nu-back-btn {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    stroke: white !important;
+}
+
+.nu-content {
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.nu-heading {
+    color: #111;
+    font-family: sf-bold;
+    font-size: 26px;
+    line-height: 1.2;
+    margin-bottom: 40px;
+    letter-spacing: -0.5px;
+}
+
+.nu-subtext {
+    color: #555;
+    font-family: sf-medium;
+    font-size: 15px;
+    margin-top: -30px;
+    margin-bottom: 40px;
+    line-height: 1.4;
+}
+
+.nu-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 25px;
+}
+
+.nu-input-wrapper label {
+    font-family: sf-medium;
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.nu-input {
+    font-family: sf-bold;
+    font-size: 22px;
+    color: #111;
+    border: none;
+    border-bottom: 2px solid #eee;
+    padding: 5px 0 10px;
+    transition: border-color 0.3s;
+}
+
+.nu-input:focus {
+    outline: none;
+    border-bottom-color: #8A05BE;
+}
+
+.nu-footer {
+    padding: 10px 30px 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.nu-fab-btn {
+    background-color: #e5e5e5;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+}
+
+.nu-fab-btn svg {
+    width: 24px;
+    height: 24px;
+    stroke: #999;
+    transition: stroke 0.3s;
+}
+
+/* Simulate focus-within to highlight button (we use JS but CSS can do basic hover) */
+.nu-fab-btn:active {
+    transform: scale(0.95);
+}
+
+/* Quando houver texto, o JS não adiciona classe, mas podemos usar :placeholder-shown */
+.nu-input:not(:placeholder-shown) ~ .nu-fab-btn,
+.nu-form-screen:focus-within .nu-fab-btn {
+    background-color: #8A05BE;
+}
+.nu-form-screen:focus-within .nu-fab-btn svg {
+    stroke: white;
 }
 
 .bank-top-purple {
@@ -709,18 +911,119 @@ input {
     height: 20px;
 }
 
-.bank-transfer-modal {
+.pix-transfer-modal, .pix-confirm-modal, .key-password-modal {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #000;
-    z-index: 10;
-    display: flex;
+    z-index: 20; /* Fica por cima da tela de Área Pix */
     flex-direction: column;
 }
 
+.pix-summary {
+    background-color: #f4f4f4;
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.pix-summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+}
+
+.pix-summary-item span {
+    color: #666;
+    font-family: sf-medium;
+}
+
+.pix-summary-item strong {
+    color: #000;
+    font-family: sf-bold;
+}
+
+.copy-key-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+.copy-key-card:active {
+    background: #f8f8f8;
+    transform: scale(0.98);
+}
+
+.copy-key-card svg {
+    width: 24px;
+    height: 24px;
+    opacity: 0.5;
+}
+
+.bank-loading-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255,255,255,0.9);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.bank-loading-modal span {
+    font-family: sf-bold;
+    color: #8A05BE;
+    font-size: 16px;
+}
+
+.nu-loader {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    margin-bottom: 5px;
+}
+
+.nu-loader .dot {
+    width: 14px;
+    height: 14px;
+    background-color: #8A05BE;
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.nu-loader .dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.nu-loader .dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+    40% { transform: scale(1); opacity: 1; }
+}
+
+/* Os estilos internos usam as classes nu-* já definidas, não precisamos do bank-modal-header antigo */
 .bank-modal-header {
     background-color: #8A05BE;
     padding: 35px 20px 15px;

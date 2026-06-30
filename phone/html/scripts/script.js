@@ -46,10 +46,11 @@ function openApp(appId) {
     // Add active class to trigger animation (Adiciona a classe 'active' pra fazer a animação de abrir)
     targetApp.classList.add('active');
     
-    // If it's the bank app (index 5), request data from server (Se for o aplicativo do banco, avisa o Lua pra buscar os dados)
+    // If it's the bank app (index 5)
     if (appId == 5) {
+        // Pedimos pro servidor verificar se o jogador tem conta e se já tá logado
         if (typeof mta !== 'undefined') {
-            mta.triggerEvent("phone:fetchBankData"); // Chama o evento no lado cliente
+            mta.triggerEvent("phone:checkBankStatus");
         }
     }
 }
@@ -302,14 +303,89 @@ let currentBalance = 0; // Guarda o saldo atual
 let isBalanceHidden = false; // Controla se o saldo está oculto ou não
 
 // Update UI from Lua (Função chamada pelo Lua para atualizar o nome e saldo no celular)
-function updateBankData(playerName, balance) {
+function updateBankData(playerName, balance, accountId, historyJson, pixKey) {
     get('#bank-user-name').textContent = playerName; // Atualiza o nome
     currentBalance = parseFloat(balance); // Salva o saldo real
+    
+    // Atualiza a chave da conta
+    const accountDisplay = get('#current-account-key');
+    if (accountDisplay) {
+        accountDisplay.textContent = accountId;
+    }
+    
+    // Atualiza a chave pix na interface
+    const keyDisplay = get('#current-pix-key');
+    if (keyDisplay) {
+        if (pixKey && pixKey.length > 0) {
+            keyDisplay.textContent = pixKey;
+        } else {
+            keyDisplay.textContent = "Nenhuma chave gerada";
+        }
+    }
     
     // Se o saldo não estiver oculto, mostra o valor na tela
     if (!isBalanceHidden) {
         get('#bank-balance-text').textContent = '$ ' + currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2});
     }
+    
+    // Processa e renderiza o histórico
+    if (historyJson) {
+        try {
+            let history = JSON.parse(historyJson);
+            
+            // Corrige o aninhamento que o toJSON do MTA cria [ [ {...} ] ]
+            if (Array.isArray(history) && history.length === 1 && Array.isArray(history[0])) {
+                history = history[0];
+            }
+            
+            renderBankHistory(history, accountId);
+        } catch(e) {
+            console.error("Erro ao carregar historico:", e);
+        }
+    }
+}
+
+function renderBankHistory(history, myAccountId) {
+    const listHome = get('.bank-history-section .history-list');
+    const listFull = get('.full-history-list');
+    
+    if (listHome) listHome.innerHTML = '';
+    if (listFull) listFull.innerHTML = '';
+    
+    if (!history || history.length === 0) {
+        const noDataHtml = '<div style="text-align:center; padding:20px; color:#999; font-family:sf-medium;">Nenhuma transação recente.</div>';
+        if (listHome) listHome.innerHTML = noDataHtml;
+        if (listFull) listFull.innerHTML = noDataHtml;
+        return;
+    }
+    
+    history.forEach((tx, index) => {
+        const isSender = (tx.sender === myAccountId);
+        const iconClass = isSender ? 'sent' : 'received';
+        const title = isSender ? 'Transferência enviada' : 'Transferência recebida';
+        const otherName = isSender ? tx.receiver_name : tx.sender_name;
+        const valClass = isSender ? 'negative' : 'positive';
+        const valSign = isSender ? '-$' : '+$';
+        const amount = parseFloat(tx.amount).toLocaleString('en-US', {minimumFractionDigits: 2});
+        
+        let svg = isSender 
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="#E74C3C" stroke-width="2"><line x1="5" y1="19" x2="19" y2="5"></line><polyline points="5 5 19 5 19 19"></polyline></svg>'
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="#8A05BE" stroke-width="2"><line x1="19" y1="5" x2="5" y2="19"></line><polyline points="19 19 5 19 5 5"></polyline></svg>';
+            
+        const html = `
+        <div class="history-item">
+            <div class="hi-icon ${iconClass}">${svg}</div>
+            <div class="hi-details">
+                <div class="hi-title">${title}</div>
+                <div class="hi-subtitle">${otherName || 'Desconhecido'}</div>
+            </div>
+            <div class="hi-value ${valClass}">${valSign}${amount}</div>
+        </div>
+        `;
+        
+        if (listFull) listFull.insertAdjacentHTML('beforeend', html);
+        if (listHome && index < 3) listHome.insertAdjacentHTML('beforeend', html);
+    });
 }
 
 // Balance Toggle Eye (Botão de olhinho para esconder/mostrar o saldo)
@@ -321,15 +397,114 @@ get('#toggle-balance-eye').onclick = () => {
         get('#bank-balance-text').textContent = '$ ' + currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2}); // Mostra
     }
 };
-
 // Navigation (Navegação dentro do aplicativo do banco)
+const viewAuth = get('.bank-view-auth');
+const viewLogin = get('.bank-view-login');
+const viewRegister = get('.bank-view-register');
 const viewHome = get('.bank-view-home'); // Tela principal do banco
 const viewPix = get('.bank-view-pix'); // Tela da área pix
+const viewHistory = get('.bank-view-history'); // Tela do extrato completo
+const viewKeys = get('.bank-view-keys'); // Tela das chaves pix
+
+let isBankLogged = false;
+
+// Recebe a verificação do servidor se a pessoa já tem conta ou já ta logada
+window.handleBankStatus = function(status, accountData) {
+    if (status === 'logged_in') {
+        isBankLogged = true;
+        viewAuth.style.display = 'none';
+        viewLogin.style.display = 'none';
+        viewRegister.style.display = 'none';
+        viewHome.style.display = 'flex';
+        viewPix.style.display = 'none';
+        if (typeof mta !== 'undefined') {
+            mta.triggerEvent("phone:fetchBankData");
+        }
+    } else if (status === 'has_account') {
+        isBankLogged = false;
+        viewAuth.style.display = 'none';
+        viewRegister.style.display = 'none';
+        viewHome.style.display = 'none';
+        viewPix.style.display = 'none';
+        viewLogin.style.display = 'flex';
+        
+        const accInput = get('#login-account');
+        accInput.value = accountData; // Preenche automático
+        accInput.readOnly = true; // Impede alterar
+        accInput.style.color = '#8A05BE'; // Estiliza pra mostrar que tá bloqueado/verificado
+        
+        // Foca automaticamente no campo de senha
+        setTimeout(() => get('#login-password').focus(), 100);
+    } else {
+        // no_account
+        isBankLogged = false;
+        viewLogin.style.display = 'none';
+        viewRegister.style.display = 'none';
+        viewHome.style.display = 'none';
+        viewPix.style.display = 'none';
+        viewAuth.style.display = 'flex'; // Mostra a tela de boas vindas
+    }
+}
+
+// Botões da tela de Auth
+get('#btn-show-login').onclick = () => {
+    viewAuth.style.display = 'none';
+    viewLogin.style.display = 'flex';
+};
+
+get('#btn-show-register').onclick = () => {
+    viewAuth.style.display = 'none';
+    viewRegister.style.display = 'flex';
+};
+
+// Botões de voltar para Auth
+getAll('.back-to-auth').forEach(btn => {
+    btn.onclick = () => {
+        viewLogin.style.display = 'none';
+        viewRegister.style.display = 'none';
+        viewAuth.style.display = 'flex';
+    };
+});
+
+// Enviar Registro
+get('#btn-submit-register').onclick = () => {
+    const pwd = get('#register-password').value;
+    if (pwd.length < 4) return;
+    if (typeof mta !== 'undefined') {
+        mta.triggerEvent("phone:sendBankRegister", pwd);
+    }
+};
+
+// Callback do Lua ao criar conta com sucesso
+window.onBankRegisterSuccess = function(newAccount) {
+    viewRegister.style.display = 'none';
+    viewLogin.style.display = 'flex';
+    get('#login-account').value = newAccount;
+};
+
+// Enviar Login
+get('#btn-submit-login').onclick = () => {
+    const acc = get('#login-account').value;
+    const pwd = get('#login-password').value;
+    if (!acc || pwd.length < 4) return;
+    if (typeof mta !== 'undefined') {
+        mta.triggerEvent("phone:sendBankLogin", acc, pwd);
+    }
+};
+
+// Callback do Lua ao logar com sucesso
+window.onBankLoginSuccess = function(accountId) {
+    isBankLogged = true;
+    viewLogin.style.display = 'none';
+    viewHome.style.display = 'flex';
+    // fetchBankData will be called by the server event requestBankData automatically
+};
+
 
 // Abre a área Pix
 get('#open-pix-area').onclick = () => {
     viewHome.style.display = 'none';
-    viewPix.style.display = 'flex';
+    viewPix.style.display = 'block';
 };
 
 // Fecha a área pix e volta pro início
@@ -338,38 +513,179 @@ get('#close-pix-area').onclick = () => {
     viewHome.style.display = 'flex';
 };
 
+// Abre o Extrato
+get('#btn-see-all-history').onclick = (e) => {
+    e.preventDefault();
+    viewHome.style.display = 'none';
+    viewHistory.style.display = 'flex';
+};
+
+// Fecha o Extrato
+get('#close-history-area').onclick = () => {
+    viewHistory.style.display = 'none';
+    viewHome.style.display = 'flex';
+};
+
+// Abre Minhas Chaves
+get('#open-keys-area').onclick = () => {
+    viewPix.style.display = 'none';
+    viewKeys.style.display = 'flex';
+};
+
+// Fecha Minhas Chaves
+get('#close-keys-area').onclick = () => {
+    viewKeys.style.display = 'none';
+    viewPix.style.display = 'block'; // Volta pra tela do pix
+};
+
+// Modal de Senha da Chave
+const keyPasswordModal = get('.key-password-modal');
+
+// Quando clica em Gerar Chave Aleatória
+get('#btn-generate-pix-key').onclick = () => {
+    keyPasswordModal.style.display = 'flex';
+    get('#key-password-input').value = '';
+};
+
+// Fechar modal da senha da chave
+get('.key-password-modal .close-key-modal').onclick = () => {
+    keyPasswordModal.style.display = 'none';
+};
+
+// Fechar pelo comando do servidor
+window.closeKeyModal = function() {
+    keyPasswordModal.style.display = 'none';
+};
+
+// Confirmar senha para gerar chave
+get('#btn-confirm-key-generate').onclick = () => {
+    const pwd = get('#key-password-input').value;
+    if (pwd.length < 4) return;
+    
+    const loadingText = loadingModal.querySelector('span');
+    loadingText.textContent = "Gerando nova chave...";
+    loadingModal.style.display = 'flex'; // Exibe loading
+    
+    setTimeout(() => { loadingText.textContent = "Registrando no banco..."; }, 800);
+    
+    setTimeout(() => {
+        if (typeof mta !== 'undefined') {
+            mta.triggerEvent("phone:generatePixKey", pwd);
+        }
+        loadingText.textContent = "Processando..."; // Reset
+    }, 1800);
+};
+
 // Transfer Modal (Janela de fazer transferência/Pix)
-const bankModal = get('.bank-transfer-modal');
+const bankModal = get('.pix-transfer-modal');
 get('#open-transfer-modal').onclick = () => {
     bankModal.style.display = 'flex'; // Abre a janela
 };
 
-get('.close-modal').onclick = () => {
+get('.pix-transfer-modal .close-modal').onclick = () => {
     bankModal.style.display = 'none'; // Fecha a janela
 };
 
-// Send Pix (Botão de enviar Pix)
-const btnSendPix = get('#btn-send-pix');
-btnSendPix.onclick = () => {
-    const target = get('#pix-target').value; // Pega o ID que o jogador digitou
-    const amount = get('#pix-amount').value; // Pega o valor que o jogador digitou
+// Modal elements
+const confirmModal = get('.pix-confirm-modal');
+const loadingModal = get('.bank-loading-modal');
+
+// Verify Pix (Botão da tela inicial de transferência)
+const btnVerifyPix = get('#btn-verify-pix');
+btnVerifyPix.onclick = () => {
+    const target = get('#pix-target').value;
+    const amount = get('#pix-amount').value;
     
-    // Se algum campo estiver vazio, não faz nada
-    if (!target || !amount) {
-        return;
+    if (!target || !amount || amount <= 0) return;
+    
+    const loadingText = loadingModal.querySelector('span');
+    loadingText.textContent = "Buscando dados...";
+    loadingModal.style.display = 'flex';
+    
+    setTimeout(() => {
+        if (typeof mta !== 'undefined') {
+            mta.triggerEvent("phone:verifyPixTarget", target, amount);
+        }
+        loadingText.textContent = "Processando..."; // Reset
+    }, 800);
+};
+
+// Função para copiar a chave ao clicar no cartão
+window.copyKey = function(type) {
+    let keyToCopy = "";
+    if (type === 'account') {
+        keyToCopy = get('#current-account-key').textContent;
+    } else if (type === 'random') {
+        keyToCopy = get('#current-pix-key').textContent;
     }
     
-    // Se o MTA estiver conectado, envia pro Lua processar a transferência
+    // Se não tiver chave, não faz nada
+    if (!keyToCopy || keyToCopy.includes("Nenhuma") || keyToCopy === "Carregando...") return;
+    
     if (typeof mta !== 'undefined') {
-        mta.triggerEvent("phone:sendPix", target, amount);
+        mta.triggerEvent("phone:copyToClipboard", keyToCopy);
     }
+};
+
+// Recebido do Lua quando o alvo existe e o saldo é suficiente
+window.onPixVerified = function(amount, targetName, targetAccount) {
+    loadingModal.style.display = 'none'; // esconde loading
+    bankModal.style.display = 'none'; // esconde tela de valor
     
-    // Fecha a janela e limpa os campos
-    bankModal.style.display = 'none';
+    // Preenche tela de confirmação
+    get('#confirm-pix-amount').innerText = '$' + amount;
+    get('#confirm-pix-name').innerText = targetName;
+    get('#confirm-pix-target').innerText = targetAccount;
+    get('#pix-password').value = '';
+    
+    confirmModal.style.display = 'flex'; // Abre tela de senha
+    setTimeout(() => get('#pix-password').focus(), 100);
+};
+
+// Voltar da tela de confirmação
+get('.pix-confirm-modal .close-confirm').onclick = () => {
+    confirmModal.style.display = 'none';
+    bankModal.style.display = 'flex';
+};
+
+// Fechar tela de loading caso dê erro na verificação
+window.hideBankLoading = function() {
+    loadingModal.style.display = 'none';
+};
+
+// Botão de confirmar PIX com a senha
+const btnConfirmPix = get('#btn-confirm-pix');
+btnConfirmPix.onclick = () => {
+    const target = get('#pix-target').value;
+    const amount = get('#pix-amount').value;
+    const password = get('#pix-password').value;
+    
+    if (!password || password.length < 4) return;
+    
+    const loadingText = loadingModal.querySelector('span');
+    loadingText.textContent = "Preparando transferência...";
+    loadingModal.style.display = 'flex';
+    
+    setTimeout(() => { loadingText.textContent = "Enviando valor..."; }, 900);
+    setTimeout(() => { loadingText.textContent = "Gerando comprovante..."; }, 1800);
+    
+    setTimeout(() => {
+        if (typeof mta !== 'undefined') {
+            mta.triggerEvent("phone:processPix", target, amount, password);
+        }
+        loadingText.textContent = "Processando..."; // Reset
+    }, 2800);
+};
+
+// Quando o PIX termina (sucesso)
+window.onPixSuccess = function() {
+    loadingModal.style.display = 'none';
+    confirmModal.style.display = 'none';
+    
     get('#pix-target').value = '';
     get('#pix-amount').value = '';
+    get('#pix-password').value = '';
     
-    // Auto return to home (Volta pra tela inicial do banco automaticamente)
     viewPix.style.display = 'none';
     viewHome.style.display = 'flex';
 };

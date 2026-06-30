@@ -9,6 +9,14 @@ function loadBrowser()
     loadBrowserURL(source, "http://mta/local/html/index.html")
 end
 
+-- Fecha modal da Chave Pix
+addEvent("phone:closeKeyModal", true)
+addEventHandler("phone:closeKeyModal", root, function()
+    if isElement(browserContent) then
+        executeBrowserJavascript(browserContent, "if(window.closeKeyModal) window.closeKeyModal();")
+    end
+end)
+
 -- Função disparada quando a página termina de carregar
 function whenBrowserReady()
     -- Pode ser usada para enviar informações iniciais ao JS
@@ -120,18 +128,104 @@ end)
 
 -- Recebe os dados do banco que vieram do servidor
 addEvent("phone:receiveBankData", true)
-addEventHandler("phone:receiveBankData", root, function(playerName, balance)
+addEventHandler("phone:receiveBankData", root, function(playerName, balance, accountId, history, pixKey)
     if isElement(browserContent) then
-        -- Envia pro JavaScript atualizar a tela do banco (nome e saldo)
-        executeBrowserJavascript(browserContent, "updateBankData('" .. playerName .. "', " .. balance .. ");")
+        local histJson = "[]"
+        if history and type(history) == "table" then
+            histJson = toJSON(history)
+            -- Remove os colchetes extras que o MTA coloca (o MTA coloca [ [ ] ] às vezes)
+            if histJson:sub(1,1) == "[" then
+                -- É válido, mas vamos escapar as aspas simples e barras
+                histJson = string.gsub(histJson, "\\", "\\\\")
+                histJson = string.gsub(histJson, "'", "\\'")
+            end
+        end
+        executeBrowserJavascript(browserContent, string.format("updateBankData('%s', %s, '%s', '%s', '%s');", playerName, balance, accountId, histJson, pixKey or ""))
     end
 end)
 
--- Quando o jogador clica em 'Enviar Pix' no celular
-addEvent("phone:sendPix", true)
-addEventHandler("phone:sendPix", root, function(targetId, amount)
-    -- Envia pro servidor processar a transferência
-    triggerServerEvent("phone:processPix", localPlayer, targetId, amount)
+-- JS verifica status da conta ao abrir app
+addEvent("phone:checkBankStatus", true)
+addEventHandler("phone:checkBankStatus", root, function()
+    triggerServerEvent("phone:checkBankStatus", localPlayer)
+end)
+
+-- Recebe o status da conta do servidor
+addEvent("phone:onBankStatusChecked", true)
+addEventHandler("phone:onBankStatusChecked", root, function(status, accountData)
+    if isElement(browserContent) then
+        executeBrowserJavascript(browserContent, string.format("window.handleBankStatus('%s', '%s');", status, accountData or ""))
+    end
+end)
+
+-- JS envia login pro servidor
+addEvent("phone:sendBankLogin", true)
+addEventHandler("phone:sendBankLogin", root, function(account, password)
+    triggerServerEvent("phone:loginAccount", localPlayer, account, password)
+end)
+
+-- JS envia registro pro servidor
+addEvent("phone:sendBankRegister", true)
+addEventHandler("phone:sendBankRegister", root, function(password)
+    triggerServerEvent("phone:createAccount", localPlayer, password)
+end)
+
+-- Servidor avisa que logou com sucesso
+addEvent("phone:onLoginSuccess", true)
+addEventHandler("phone:onLoginSuccess", root, function(accountId)
+    if isElement(browserContent) then
+        executeBrowserJavascript(browserContent, "window.onBankLoginSuccess('" .. accountId .. "');")
+    end
+end)
+
+-- Servidor avisa que criou a conta com sucesso
+addEvent("phone:onAccountCreated", true)
+addEventHandler("phone:onAccountCreated", root, function(newAccount)
+    if isElement(browserContent) then
+        executeBrowserJavascript(browserContent, "window.onBankRegisterSuccess('" .. newAccount .. "');")
+    end
+end)
+
+-- Solicita verificação do alvo do PIX
+addEvent("phone:verifyPixTarget", true)
+addEventHandler("phone:verifyPixTarget", root, function(targetAccount, amount)
+    triggerServerEvent("phone:verifyPixTarget", localPlayer, targetAccount, amount)
+end)
+
+-- Retorno da verificação do servidor
+addEvent("phone:onPixTargetVerified", true)
+addEventHandler("phone:onPixTargetVerified", root, function(amount, targetName, targetAccount)
+    if isElement(browserContent) then
+        executeBrowserJavascript(browserContent, string.format("window.onPixVerified('%s', '%s', '%s');", amount, targetName, targetAccount))
+    end
+end)
+
+-- Processa PIX final com a senha
+addEvent("phone:processPix", true)
+addEventHandler("phone:processPix", root, function(targetAccount, amount, password)
+    triggerServerEvent("phone:processPix", localPlayer, targetAccount, amount, password)
+end)
+
+-- Solicita a geração de uma nova chave PIX com senha
+addEvent("phone:generatePixKey", true)
+addEventHandler("phone:generatePixKey", root, function(password)
+    triggerServerEvent("phone:generatePixKey", localPlayer, password)
+end)
+
+-- Sucesso no PIX
+addEvent("phone:onPixSuccess", true)
+addEventHandler("phone:onPixSuccess", root, function()
+    if isElement(browserContent) then
+        executeBrowserJavascript(browserContent, "window.onPixSuccess();")
+    end
+end)
+
+-- Erro genérico para ocultar loading
+addEvent("phone:hideBankLoading", true)
+addEventHandler("phone:hideBankLoading", root, function()
+    if isElement(browserContent) then
+        executeBrowserJavascript(browserContent, "window.hideBankLoading();")
+    end
 end)
 
 -- Recebe uma notificação do servidor para aparecer no celular
@@ -153,6 +247,15 @@ addEventHandler("phone:pushNotification", root, function(title, message, iconTyp
             -- Slide up partially to show the notification (Sobe só uma parte)
             animateBrowserY(currentY, sh - 115, 400)
         end
+    end
+end)
+
+-- Copia texto para a área de transferência do Windows/Celular
+addEvent("phone:copyToClipboard", true)
+addEventHandler("phone:copyToClipboard", root, function(textToCopy)
+    if setClipboard(textToCopy) then
+        -- Simula como se o servidor estivesse enviando a notificação
+        triggerEvent("phone:pushNotification", localPlayer, "Copiado", "Chave copiada: " .. textToCopy, "bank")
     end
 end)
 
