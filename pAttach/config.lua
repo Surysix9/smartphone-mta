@@ -9,6 +9,7 @@
 
  -- https://github.com/gptrk0/mtasa-pAttach
  -- https://mtasa.com/discord
+  -- https://mtasa.com/discord
 ]]
  
 
