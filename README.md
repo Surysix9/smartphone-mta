@@ -32,29 +32,39 @@ Siga os passos abaixo para fazer o sistema funcionar corretamente no seu servido
 ### ⚠️ Requisito Importante: pAttach
 É **obrigatório** iniciar o resource `pAttach` para o perfeito funcionamento deste script. O sistema de smartphone utiliza o `pAttach` para anexar de forma correta e otimizada o objeto 3D do celular na mão do jogador durante as animações de uso. Se o `pAttach` não estiver rodando, o celular não aparecerá fisicamente na mão do personagem.
 
-### 💾 ElementData (Integração de Dados)
+### ⚙️ Arquivos de Configuração (NOVO!)
 
-O sistema foi construído de forma que algumas funcionalidades consumam ou modifiquem os dados do jogador utilizando `elementdata`. 
+O sistema foi atualizado para ser **100% independente** (Standalone), sem precisar de outros mods base. Foram adicionados dois arquivos principais para configuração:
 
-Para que o celular reflita as informações reais do jogador (como saldo bancário, dinheiro em mãos, número do telefone, etc.), é necessário que o seu gamemode/framework esteja setando esses dados no elemento do jogador. 
+1. **`config.lua` (Compartilhado):** Permite alterar a tecla para abrir o celular (Padrão: `k`) e outras configurações visuais gerais.
+2. **`server_config.lua` (Apenas Servidor):** Arquivo de segurança máxima onde você define se usará `sqlite` ou `mysql`, além de configurar os dados de conexão do banco e integração de ElementData. **Por ser server-side, nenhum jogador consegue acessar suas senhas.**
 
-Verifique no código fonte quais as strings exatas de `elementdata` o script está buscando e faça a adaptação necessária para o padrão do seu servidor (por exemplo, se o seu servidor usa `setElementData(player, "bank_money", valor)`, certifique-se de que o phone busca por `"bank_money"` ou altere no phone para o nome da data do seu servidor).
+### 💾 Integração Dinâmica (ElementData e Colunas)
 
-### 🗄️ Banco de Dados (MySQL e SQLite)
+Você não precisa mais editar o código fonte para adaptar o mod ao seu servidor! No arquivo `server_config.lua`, dentro da sessão `integration`, você pode definir exatamente:
+- Qual `element data` armazena o ID do seu jogador (Ex: `"char:id"`, `"ID"`, etc).
+- O nome da tabela do seu banco de dados (Ex: `"characters"`).
+- O nome de cada coluna usada pelo celular (`bank`, `name`, `lastname`).
+Basta colocar os nomes que o seu servidor usa e o celular funcionará magicamente!
 
-O sistema de smartphone utiliza **MySQL** como padrão para o salvamento de contatos, mensagens e outras informações. O MySQL é recomendado para garantir a melhor performance em servidores. 
+### 🗄️ Banco de Dados Automático (MySQL e SQLite)
 
-No entanto, caso você não possua um banco de dados MySQL configurado ou prefira uma solução mais simples, o script **pode ser facilmente configurado para utilizar SQLite**. Basta alterar a configuração de conexão no arquivo server-side correspondente para alternar o modo de salvamento.
+O sistema de smartphone suporta tanto **MySQL** (recomendado para grandes servidores) quanto **SQLite** (perfeito para servidores locais ou testes).
+
+**A Mágica do SQLite (Plug and Play):** 
+Se você definir `type = "sqlite"` no `server_config.lua`, o mod irá criar o banco de dados e as tabelas necessárias **automaticamente** assim que for iniciado! Você não precisa rodar nenhum script SQL manualmente. É só ligar o mod e usar.
 
 ## 🚀 Funcionalidades
 
 ### ✅ Já Implementadas
 - **Interface Moderna (UI/UX):** Design limpo, fluido e responsivo, construído com tecnologias web (CEF).
-- **Sistema Bancário:** Aplicativo de banco completo para realizar transferências e consultar saldo em tempo real.
-- **Notificações Inteligentes:** Sistema de notificações na tela (estilo *toast/swiper*) para alertas e mensagens.
+- **Sistema Bancário:** Aplicativo de banco completo para realizar transferências via Pix e consultar saldo em tempo real.
+- **Notificações Inteligentes:** Sistema de notificações na tela (estilo *toast/swiper*) para alertas e mensagens, mesmo com o celular no bolso.
 - **Física e Animações (3D):** O personagem interage com um objeto físico do celular na mão através do `pAttach`.
-- **Banco de Dados Híbrido:** Suporte nativo e otimizado para salvar informações utilizando MySQL ou SQLite.
-- **Integração por ElementData:** Fácil adaptação aos dados de qualquer gamemode/framework.
+- **100% Standalone (Independente):** Não precisa de nenhum mod "core". Ele faz a conexão com o banco de dados sozinho.
+- **Banco de Dados Híbrido Automático:** Suporte para MySQL ou SQLite. Se usar SQLite, ele cria o banco e tabelas sozinho!
+- **Integração Descomplicada:** Configure o ElementData e as tabelas/colunas de banco de dados diretamente no `server_config.lua` sem mexer em código.
+- **Código Totalmente Comentado em Português:** Perfeito para leigos entenderem o que cada linha de código faz.
 
 ### 🚧 Funcionalidades Futuras (Em Breve)
 - **Aplicativo de Contatos:** Salvar, editar e gerenciar a agenda telefônica de outros jogadores.
