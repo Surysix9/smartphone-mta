@@ -17,6 +17,12 @@ Aqui estão algumas imagens do sistema em funcionamento:
 | :---: | :---: | :---: | :---: |
 | <img src="prints/home.png" width="220"> | <img src="prints/bank.png" width="220"> | <img src="prints/bank2.png" width="220"> | <img src="prints/swipernotifications.png" width="220"> |
 
+<br>
+
+| Chave Pix | Confirmação Pix | Sistema Pix |
+| :---: | :---: | :---: |
+| <img src="prints/chavepix.PNG" width="220"> | <img src="prints/confirmacaopix.PNG" width="220"> | <img src="prints/pixbank.PNG" width="220"> |
+
 ## ⚙️ Como Instalar e Configurar
 
 Siga os passos abaixo para fazer o sistema funcionar corretamente no seu servidor:
