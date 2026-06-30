@@ -1,0 +1,54 @@
+<meta>
+    <info author="" name="open source phone" version="1.1.8" type="script" description="version 1.1.8" />
+
+    <script src="c_phone-system.lua" type="client" cache="false" />
+    <script src="s_phone-system.lua" type="server" />
+
+    <!-- Main Files -->
+    <file src="html/index.html"/>
+    <file src="html/styles/style.css"/>
+    <file src="html/scripts/script.js"/>
+    
+    <!-- Models -->
+    <file src="model/phone.dff"/>
+    <file src="model/phone.txd"/>
+    
+    <!-- Sounds -->
+    <file src="sounds/call.mp3"/>
+    <file src="sounds/closephone.mp3"/>
+    <file src="sounds/gridlist_hover.mp3"/>
+    <file src="sounds/notification.mp3"/>
+    <file src="sounds/openphone.mp3"/>
+    <file src="sounds/receivecall.mp3"/>
+
+    <!-- Fonts -->
+    <file src="html/styles/fonts/sf-pro-bold.OTF"/>
+    <file src="html/styles/fonts/sf-pro-medium.OTF"/>
+    <file src="html/styles/fonts/sf-pro-regular.OTF"/>
+
+    <!-- Backgrounds -->
+    <file src="html/styles/backgrounds/1.jpg"/>
+    <file src="html/styles/backgrounds/2.jpg"/>
+    <file src="html/styles/backgrounds/3.jpg"/>
+    <file src="html/styles/backgrounds/4.jpg"/>
+    <file src="html/styles/backgrounds/5.jpg"/>
+    <file src="html/styles/backgrounds/6.jpg"/>
+
+    <!-- Icons -->
+    <file src="html/styles/svgs/apple-music.svg" />
+    <file src="html/styles/svgs/apple-tv.svg" />
+    <file src="html/styles/svgs/calculator.svg" />
+    <file src="html/styles/svgs/camera.svg" />
+    <file src="html/styles/svgs/mail.svg" />
+    <file src="html/styles/svgs/photos.svg" />
+    <file src="html/styles/svgs/settings.svg" />
+    <file src="html/styles/svgs/stocks.svg" />
+    <file src="html/styles/svgs/notes.svg" />
+    <file src="html/styles/svgs/news.svg" />
+    <file src="html/styles/svgs/phone.svg" />
+    <file src="html/styles/svgs/maps.svg" />
+    <file src="html/styles/svgs/ios-message.svg" />
+    <file src="html/styles/svgs/contacts.svg" />
+    <file src="html/styles/svgs/phone-flip.svg" />
+    <file src="html/styles/svgs/delete.svg" />
+</meta>

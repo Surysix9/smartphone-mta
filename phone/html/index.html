@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles/style.css" />
+    <style>
+        @keyframes openAppAnim {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .app-interface.active {
+            animation: openAppAnim 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+    </style>
+    <script src="./scripts/script.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <div class="iphone">
+            <div class="screen-container" style="width: 100%; height: 100%; overflow: hidden; border-radius: inherit; position: relative; z-index: 1;">
+            
+            <div id="notifications-container"></div>
+
+            <div class="notch">
+                <div class="camera"></div>
+            </div>
+
+            <div class="digital-clock">4:52 AM</div>
+            <div class="battery">
+                <div class="bar"></div>
+            </div>
+
+            <section class="lock-screen">
+                <div class="date">
+                    <div class="the-date">Tuesday, April 4</div>
+                    <div class="time">4:52</div>
+                </div>
+            </section>
+
+            <section class="unlock-screen" style="display: none;">
+                <div class="apps">
+                    <button class="app" type="button">
+                        <img src="./styles/svgs/apple-tv.svg" alt="">
+                    </button>
+                    <button class="app" type="button">
+                        <img src="./styles/svgs/stocks.svg" alt="">
+                    </button>
+                    <button class="app" type="button">
+                        <img src="./styles/svgs/calculator.svg" alt="">
+                    </button>
+                    <button class="app" type="button">
+                        <img src="./styles/svgs/news.svg" alt="">
+                    </button>
+                    <button class="app" type="button">
+                        <img src="./styles/svgs/settings.svg" alt="">
+                    </button>
+                    <button class="app bank-app-icon" type="button" style="background: #8A05BE; border-radius: 11px; display:flex; align-items:center; justify-content:center; box-sizing: border-box; cursor: pointer;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 32px; height: 32px;"><path d="M3 22h18"></path><path d="M6 18v-7"></path><path d="M10 18v-7"></path><path d="M14 18v-7"></path><path d="M18 18v-7"></path><path d="M12 2l-10 5h20l-10-5z"></path></svg>
+                    </button>
+                </div>
+                <div class="dock">
+                    <button class="app" type="button">
+                        <img src="./styles/svgs/phone.svg" alt="">
+                    </button>
+                    <button class="app" type="button">
+                        <img src="./styles/svgs/contacts.svg" alt="">
+                    </button>
+                </div>
+            </section>
+
+            <section class="apps-interfaces" style="display: none;">
+                <div class="app-interface" style="display: none;" data-app-id="0"></div> <!-- Apple Tv App -->
+                <div class="app-interface" style="display: none;" data-app-id="1"></div> <!-- Stocks App -->
+                <div class="app-interface" style="display: none;" data-app-id="2"> <!-- Calculator App -->
+                    <div class="calculator">
+                        <input type="text" class="result-board" disabled>
+                        <div class="operations">
+                            <button type="button">AC</button>
+                            <button type="button">%</button>
+                            <button type="button">C</button>
+                            <button type="button" class="orange-color">÷</button>
+                            <button type="button">7</button>
+                            <button type="button">8</button>
+                            <button type="button">9</button>
+                            <button type="button" class="orange-color">×</button>
+                            <button type="button">6</button>
+                            <button type="button">5</button>
+                            <button type="button">4</button>
+                            <button type="button" class="orange-color">-</button>
+                            <button type="button">3</button>
+                            <button type="button">2</button>
+                            <button type="button">1</button>
+                            <button type="button" class="orange-color">+</button>
+                            <button type="button" class="zero-fill">0</button>
+                            <button type="button">.</button>
+                            <button type="button" class="orange-color">=</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="app-interface" style="display: none;" data-app-id="3"></div> <!-- News App -->
+                <div class="app-interface" style="display: none;" data-app-id="4"></div> <!-- Settings App -->
+                <div class="app-interface" style="display: none;" data-app-id="5"> <!-- Bank App -->
+                    <div class="bank-view-home">
+                        <div class="bank-top-purple">
+                            <div class="bank-header-flex">
+                                <div class="bank-logo"><strong>MTA</strong>BANK</div>
+                                <div class="bank-user-btn">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                </div>
+                            </div>
+                            <div class="bank-greeting-text">Olá, <span id="bank-user-name">Carregando...</span></div>
+                        </div>
+                        <div class="bank-body-white">
+                            <div class="bank-balance-card">
+                                <div class="card-top">
+                                    <span>Conta</span>
+                                    <svg class="eye-icon" id="toggle-balance-eye" viewBox="0 0 24 24" fill="none" stroke="#cccccc" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                                </div>
+                                <div class="card-balance" id="bank-balance-text">$ ••••</div>
+                            </div>
+                            
+                            <div class="bank-action-squares">
+                                <div class="square-btn" id="open-pix-area">
+                                    <div class="square-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6H6v3"></path><path d="M15 6h3v3"></path><path d="M9 18H6v-3"></path><path d="M15 18h3v-3"></path><path d="M9 12h6"></path></svg>
+                                    </div>
+                                    <span>Área Pix</span>
+                                </div>
+                                <div class="square-btn">
+                                    <div class="square-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                                    </div>
+                                    <span>Cartões</span>
+                                </div>
+                                <div class="square-btn">
+                                    <div class="square-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="7.5 4.21 12 6.81 16.5 4.21"></polyline><polyline points="7.5 19.79 7.5 14.6 3 12"></polyline><polyline points="21 12 16.5 14.6 16.5 19.79"></polyline><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                                    </div>
+                                    <span>Caixas</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bank-history-section">
+                                <div class="history-header">
+                                    <h3>Histórico</h3>
+                                    <a href="#">Ver tudo</a>
+                                </div>
+                                <div class="history-list">
+                                    <div class="history-item">
+                                        <div class="hi-icon received"><svg viewBox="0 0 24 24" fill="none" stroke="#8A05BE" stroke-width="2"><line x1="19" y1="5" x2="5" y2="19"></line><polyline points="19 19 5 19 5 5"></polyline></svg></div>
+                                        <div class="hi-details">
+                                            <div class="hi-title">Transferência recebida</div>
+                                            <div class="hi-subtitle">Sistema</div>
+                                        </div>
+                                        <div class="hi-value positive">+$203.00</div>
+                                    </div>
+                                    <div class="history-item">
+                                        <div class="hi-icon sent"><svg viewBox="0 0 24 24" fill="none" stroke="#E74C3C" stroke-width="2"><line x1="5" y1="19" x2="19" y2="5"></line><polyline points="5 5 19 5 19 19"></polyline></svg></div>
+                                        <div class="hi-details">
+                                            <div class="hi-title">Transferência enviada</div>
+                                            <div class="hi-subtitle">Bot Teste</div>
+                                        </div>
+                                        <div class="hi-value negative">-$20.00</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pix Area View -->
+                    <div class="bank-view-pix" style="display: none;">
+                        <div class="pix-header">
+                            <svg class="back-btn" id="close-pix-area" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+                        </div>
+                        <div class="pix-body">
+                            <h2>Área Pix</h2>
+                            <p>O que você deseja fazer?</p>
+                            
+                            <div class="pix-action-list">
+                                <div class="pix-action-item" id="open-transfer-modal">
+                                    <div class="pai-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></div>
+                                    <div class="pai-text">
+                                        <h3>Fazer Pix</h3>
+                                        <span>Pagar com Pix, QR Code ou Copia e Cola</span>
+                                    </div>
+                                    <div class="pai-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><path d="M9 18l6-6-6-6"></path></svg></div>
+                                </div>
+                                <div class="pix-action-item">
+                                    <div class="pai-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg></div>
+                                    <div class="pai-text">
+                                        <h3>Minhas Chaves</h3>
+                                        <span>Gerenciar suas chaves cadastradas</span>
+                                    </div>
+                                    <div class="pai-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2"><path d="M9 18l6-6-6-6"></path></svg></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transfer Modal (Overlay) -->
+                    <div class="bank-transfer-modal" style="display: none;">
+                        <div class="bank-modal-header">
+                            <svg class="close-modal" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            <span>Transferir / Pix</span>
+                        </div>
+                        <div class="bank-modal-body">
+                            <div class="bank-input-group">
+                                <label>ID / Conta de Destino</label>
+                                <input type="number" id="pix-target" placeholder="Ex: 1">
+                            </div>
+                            <div class="bank-input-group">
+                                <label>Valor ($)</label>
+                                <input type="number" id="pix-amount" placeholder="Ex: 1500">
+                            </div>
+                            <button class="bank-btn-confirm" id="btn-send-pix">Confirmar Transferência</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="app-interface" style="display: none;" data-app-id="6"></div> <!-- Phone App -->
+                <div class="app-interface" style="display: none;" data-app-id="7"></div> <!-- Contacts App -->
+            </section>
+            </div>
+
+            <div class="home-button"></div>
+        </div>
+    </div>
+</body>
+</html>
