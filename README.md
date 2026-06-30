@@ -13,15 +13,9 @@ Sistema de Smartphone totalmente open source e com atualizações constantes par
 
 Aqui estão algumas imagens do sistema em funcionamento:
 
-### Tela Inicial
-![Home](prints/home.png)
-
-### Sistema Bancário
-![Bank](prints/bank.png)
-![Bank 2](prints/bank2.png)
-
-### Notificações
-![Notificações](prints/swipernotifications.png)
+| Tela Inicial | Menu do Banco | Transferência / Pix | Notificações |
+| :---: | :---: | :---: | :---: |
+| <img src="prints/home.png" width="220"> | <img src="prints/bank.png" width="220"> | <img src="prints/bank2.png" width="220"> | <img src="prints/swipernotifications.png" width="220"> |
 
 ## ⚙️ Como Instalar e Configurar
 
